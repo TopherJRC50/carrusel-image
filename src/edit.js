@@ -1,93 +1,105 @@
-import { registerBlockType } from '@wordpress/blocks';
+/**
+ * Retrieves the translation of text.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-i18n/
+ */
 import { __ } from '@wordpress/i18n';
-import { TextControl, FormFileUpload, PanelBody, Button, ResponsiveWrapper } from '@wordpress/components';
 
-const { Fragment } = wp.element;
+/**
+ * React hook that is used to mark the block wrapper element.
+ * It provides all the necessary props like the class name.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
+ */
+import { useBlockProps, MediaPlaceholder, BlockIcon, BlockControls, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
 
-import {
-	InspectorControls,
-    useBlockProps,
-    ColorPalette,
-	MediaUpload, 
-	MediaUploadCheck
-} from '@wordpress/block-editor';
-export default function Edit(props ) {
+/**
+ * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
+ * Those files can contain any CSS code that gets applied to the editor.
+ *
+ * @see https://www.npmjs.com/package/@wordpress/scripts#using-css
+ */
+import './editor.scss';
 
-	const { attributes, setAttributes } = props;
- 
-	const removeMedia = () => {
-		props.setAttributes({
-			mediaId: 0,
-			mediaUrl: ''
-		});
-	}
- 
- 	const onSelectMedia = (media) => {
-		props.setAttributes({
-			mediaId: media.id,
-			mediaUrl: media.url
-		});
-	}
- 
-	const blockStyle = {
-		backgroundImage: attributes.mediaUrl != '' ? 'url("' + attributes.mediaUrl + '")' : 'none'
-	};
+/**
+ * The edit function describes the structure of your block in the context of the
+ * editor. This represents what the editor will render when the block is used.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#edit
+ *
+ * @return {WPElement} Element to render.
+ */
+import { ToolbarButton, ToolbarGroup, SelectControl, ToggleControl, PanelBody  } from "@wordpress/components";
+
+export default function Edit(props) {
 	
+
+const hasImages = props.attributes.images.length > 0;
+
 	return (
-		<Fragment>
-			<InspectorControls>
-				<PanelBody
-					title={__('Select block background image', 'awp')}
-					initialOpen={ true }
-				>
-					<div className="editor-post-featured-image">
-						<MediaUploadCheck>
-							<MediaUpload
-								onSelect={onSelectMedia}
-								value={attributes.mediaId}
-								allowedTypes={ ['image'] }
-								render={({open}) => (
-									<Button 
-										className={attributes.mediaId == 0 ? 'editor-post-featured-image__toggle' : 'editor-post-featured-image__preview'}
-										onClick={open}
-									>
-										{attributes.mediaId == 0 && __('Choose an image', 'awp')}
-										{props.media != undefined && 
-						            			<ResponsiveWrapper
-									    		naturalWidth={ props.media.media_details.width }
-											naturalHeight={ props.media.media_details.height }
-									    	>
-									    		<img src={props.media.source_url} />
-									    	</ResponsiveWrapper>
-						            		}
-									</Button>
-								)}
-							/>
-						</MediaUploadCheck>
-						{attributes.mediaId != 0 && 
-							<MediaUploadCheck>
-								<MediaUpload
-									title={__('Replace image', 'awp')}
-									value={attributes.mediaId}
-									onSelect={onSelectMedia}
-									allowedTypes={['image']}
-									render={({open}) => (
-										<Button onClick={open} isDefault isLarge>{__('Replace image', 'awp')}</Button>
-									)}
-								/>
-							</MediaUploadCheck>
+		<>
+			{<BlockControls>
+				<ToolbarGroup>
+					<MediaUploadCheck>
+						<MediaUpload
+							multiple
+							gallery
+							addToGallery={true}
+							onSelect={(newImages) =>
+								props.setAttributes({ images: newImages })}
+							allowedTypes={["image"]}
+							value={props.attributes.images.map((image) => image.id)}
+							render={({ open }) => (
+								<ToolbarButton onClick={open}>
+									{__("Edit Gallery", "scrollable-gallery")}
+								</ToolbarButton>)}
+						/>
+					</MediaUploadCheck>
+				</ToolbarGroup>
+			</BlockControls>}
+			{<InspectorControls>
+				<PanelBody title={__("General", "scrollable-gallery")} initialOpen>
+					<ToggleControl
+						checked={props.attributes.pauseOnHover}
+						label={__("Pause on hover", "scrollable-gallery")}
+						onChange={() =>
+							props.setAttributes({
+								pauseOnHover: !props.attributes.pauseOnHover,
+							})
 						}
-						{attributes.mediaId != 0 && 
-							<MediaUploadCheck>
-								<Button onClick={removeMedia} isLink isDestructive>{__('Remove image', 'awp')}</Button>
-							</MediaUploadCheck>
-						}
-					</div>
+					/>
 				</PanelBody>
-			</InspectorControls>
-			<div style={blockStyle}>
-				... Your block content here...
+				<SelectControl
+				value={props.attributes.direction}
+				options={[
+					{ value: "right", label: "Right" },
+					{ value: "left", label: "Left" },
+				]}
+				label={__("Direction", "scrollable-gallery")}
+				onChange={(newDirection) => props.setAttributes({ direction: newDirection })}
+			/>
+			</InspectorControls>}
+			<div {...useBlockProps()}>
+				{hasImages && (
+					<figure className="scrollable-gallery-inner-container">
+						{props.attributes.images.map((image, index) => (
+							<img key={index} src={image.url} />
+						))}
+					</figure>
+				)}
+				{!hasImages && (
+					<MediaPlaceholder
+						multiple
+						gallery
+						icon={<BlockIcon icon="format-gallery" />}
+						labels={{
+							title: "Scrollable Gallery",
+							instructions: "Create a sponsors scrollable gallery.",
+						}}
+						onSelect={(newImages) => props.setAttributes({ images: newImages })}
+					/>
+				)}
 			</div>
-		</Fragment>
+		</>
 	);
 }

@@ -8,19 +8,27 @@
 	"icon": "smiley",
 	"description": "Example block scaffolded with Create Block tool.",
 	"attributes": {
-        "mediaId": {
-			"type": "number",
-			"default": 0
+        "images": {
+            "type": "array",
+            "default": []
 		},
-		"mediaUrl": {
+		"pauseOnHover": {
+			"type": "boolean",
+			"default": false
+		},
+		"direction": {
 			"type": "string",
-			"default": ""
+			"default": "left",
+			"enum": [
+				"left",
+				"right"
+			]
 		}
-    },
-	"supports": {
-		"align": true
 	},
-	"textdomain": "carrusel-slider",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "carousel-gallery",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css"

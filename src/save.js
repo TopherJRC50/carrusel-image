@@ -1,26 +1,50 @@
-import { registerBlockType } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
-import { TextControl, FormFileUpload, PanelBody, Button, ResponsiveWrapper } from '@wordpress/components';
+/**
+ * React hook that is used to mark the block wrapper element.
+ * It provides all the necessary props like the class name.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
+ */
+import { useBlockProps, MediaPlaceholder, BlockIcon, BlockControls, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
 
+/**
+ * The save function defines the way in which the different attributes should
+ * be combined into the final markup, which is then serialized by the block
+ * editor into `post_content`.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#save
+ *
+ * @return {WPElement} Element to render.
+ */
+import { ToolbarButton, ToolbarGroup, SelectControl, ToggleControl, PanelBody  } from "@wordpress/components";
 
-const { Fragment } = wp.element;
-const { withSelect } = wp.data;
+export default function save(props) {
+	let blockProps = useBlockProps.save({
+		className: [
+			"scrollable-gallery",
+			props.attributes.pauseOnHover ? "pause-on-hover" : null,
+		],
+		style: {
+			"--total-container-transform": ((props.attributes.images.length + 1) * 16)
+				.toString()
+				.concat("vw"),
+		},
+	});
+	return (
+		<div {...useBlockProps.save()}>
+			<figure className="scrollable-gallery-inner-container" data-direction="right">
+				{props.attributes.images.map((image, index) => (
+					<img key={index} src={image.url} data-mediaid={image.id} />
+				))}
 
-import {
-	InspectorControls, 
-    useBlockProps,
-    ColorPalette,
-	MediaUpload, 
-	MediaUploadCheck
-} from '@wordpress/block-editor';
-export default function save(props ) {
-	const { attributes } = props;
-		const blockStyle = {
-			backgroundImage: attributes.mediaUrl != '' ? 'url("' + attributes.mediaUrl + '")' : 'none'
-		};
-		return (
-			<div style={blockStyle}>
-				... Your block content here...
-			</div>
-		);
+				{props.attributes.images.map((image, index) => (
+					<img
+						className="duplicate-image"
+						key={index}
+						src={image.url}
+						data-mediaid={image.id}
+					/>
+				))}
+			</figure>
+		</div>
+	);
 }

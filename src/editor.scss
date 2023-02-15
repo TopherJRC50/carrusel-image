@@ -5,5 +5,17 @@
  */
 
 .wp-block-create-block-carrusel-slider {
-	border: 1px dotted #f00;
+	.scrollable-gallery-inner-container {
+		display: flex;
+		flex-direction: row;
+		overflow-x: scroll;
+		margin: 0;
+	
+		img {
+			object-fit: cover;
+			&:not(:last-child) {
+				margin-right: 16px;
+			}
+		}
+	}
 }

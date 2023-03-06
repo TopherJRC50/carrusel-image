@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps, MediaPlaceholder, BlockIcon, BlockControls, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
+import {useRef , useBlockProps, MediaPlaceholder, BlockIcon, BlockControls, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
 
 /**
  * Lets webpack process CSS, SASS or SCSS files referenced in JavaScript files.
@@ -29,13 +29,22 @@ import './editor.scss';
  *
  * @return {WPElement} Element to render.
  */
-import { ToolbarButton, ToolbarGroup, SelectControl, ToggleControl, PanelBody  } from "@wordpress/components";
+import { ToolbarButton, ToolbarGroup, SelectControl, ToggleControl, PanelBody, BaseControl , Button, ExternalLink } from "@wordpress/components";
 
 export default function Edit(props) {
 	
 
 const hasImages = props.attributes.images.length > 0;
 
+
+let blockProps = useBlockProps.save({
+	className: "scrollable-gallery",
+	style: {
+		"--total-container-transform": ((props.attributes.images.length) * 8)
+			.toString()
+			.concat("vw")
+	}
+});
 	return (
 		<>
 			{<BlockControls>
@@ -58,34 +67,46 @@ const hasImages = props.attributes.images.length > 0;
 				</ToolbarGroup>
 			</BlockControls>}
 			{<InspectorControls>
-				<PanelBody title={__("General", "scrollable-gallery")} initialOpen>
-					<ToggleControl
-						checked={props.attributes.pauseOnHover}
-						label={__("Pause on hover", "scrollable-gallery")}
-						onChange={() =>
-							props.setAttributes({
-								pauseOnHover: !props.attributes.pauseOnHover,
-							})
-						}
-					/>
+				<PanelBody title='Carousel Settings'>
+					<BaseControl>
+						<SelectControl
+							value={props.attributes.direction}
+							options={[
+								{ value: "right", label: "Right" },
+								{ value: "left", label: "Left" },
+							]}
+							label={__("Direction", "scrollable-gallery")}
+							onChange={(newDirection) => props.setAttributes({ direction: newDirection })}
+						/>
+						<MediaUploadCheck>
+						<MediaUpload
+							multiple
+							gallery
+							addToGallery={true}
+							onSelect={(newImages) =>
+								props.setAttributes({ images: newImages })}
+							allowedTypes={["image"]}
+							value={props.attributes.images.map((image) => image.id)}
+							render={({ open }) => (
+								<Button variant='primary' onClick={open}>
+									{__("Edit Gallery", "scrollable-gallery")}
+								</Button>)}
+						/>
+						
+					</MediaUploadCheck>
+					</BaseControl>
 				</PanelBody>
-				<SelectControl
-				value={props.attributes.direction}
-				options={[
-					{ value: "right", label: "Right" },
-					{ value: "left", label: "Left" },
-				]}
-				label={__("Direction", "scrollable-gallery")}
-				onChange={(newDirection) => props.setAttributes({ direction: newDirection })}
-			/>
 			</InspectorControls>}
-			<div {...useBlockProps()}>
+			<div {...blockProps}>
 				{hasImages && (
-					<figure className="scrollable-gallery-inner-container">
-						{props.attributes.images.map((image, index) => (
-							<img key={index} src={image.url} />
-						))}
-					</figure>
+					<div>
+						<div className="scrollable-gallery-inner-container">
+							{props.attributes.images.map((image, index) => (
+								<img key={index} src={image.url} />
+							))}
+						</div>
+					</div>
+					
 				)}
 				{!hasImages && (
 					<MediaPlaceholder
@@ -93,7 +114,7 @@ const hasImages = props.attributes.images.length > 0;
 						gallery
 						icon={<BlockIcon icon="format-gallery" />}
 						labels={{
-							title: "Scrollable Gallery",
+							title: "Scrollable Sponsors Gallery",
 							instructions: "Create a sponsors scrollable gallery.",
 						}}
 						onSelect={(newImages) => props.setAttributes({ images: newImages })}

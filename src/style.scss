@@ -1,57 +1,40 @@
-/**
- * The following styles get applied both on the front of your site
- * and in the editor.
- *
- * Replace them with your own styles or remove the file completely.
- */
+.scrollable-gallery {
+	overflow: hidden;
+	position: relative;
 
-.wp-block-create-block-carrusel-slider {
-	.scrollable-gallery {
-		overflow: hidden;
-		position: relative;
 	
-		.scrollable-gallery-inner-container {
-			display: flex;
-	
-			&[data-direction="left"] {
-				animation: marquee-left 5s linear infinite;
-			}
-	
-			&[data-direction="right"] {
-				animation: marquee-right 5s linear infinite;
-			}
-	
-			img {
-				object-fit: cover;
-				height: 100%;
-				min-width: 16vw;
-				&:not(:last-child) {
-					margin-right: 16px;
-				}
-			}
-		}
-		&.pause-on-hover {
-			.scrollable-gallery-inner-container:hover {
-				animation-play-state: paused;
-			}
+}
+.scrollable-gallery-inner-container {
+	display: flex;
+
+	&[data-direction="left"] {
+		animation: marquee-left 25s linear infinite;
 	}
+
+	&[data-direction="right"] {
+		animation: marquee-right 25s linear infinite;
 	}
-	
-	@keyframes marquee-left {
-		0% {
-			transform: translateX(0%);
-		}
-		100% {
-			transform: translateX(calc((-1 * var(--total-container-transform))));
+
+	img {
+		object-fit: cover;
+		height: 100%;
+		min-width: 8vw;
+		max-width: 8vw;
+		&:not(:last-child) {
+			padding-right: 10vw;
 		}
 	}
-	
-	@keyframes marquee-right {
-		0% {
-			transform: translateX(calc(-1 * var(--total-container-transform)));
-		}
-		100% {
-			transform: translateX(0%);
-		}
+}
+
+@keyframes marquee-left {
+
+	100% {
+		transform: translateX(calc(-2.251  * var(--total-container-transform)));
+	}
+}
+
+@keyframes marquee-right {
+	0% {
+		transform: translateX(calc(-1 * var(--replacement)  * var(--total-container-transform)));
 	}
 }

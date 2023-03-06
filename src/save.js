@@ -4,7 +4,7 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps, MediaPlaceholder, BlockIcon, BlockControls, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
+import { useRef , useBlockProps, MediaPlaceholder, BlockIcon, BlockControls, MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
 
 /**
  * The save function defines the way in which the different attributes should
@@ -15,23 +15,22 @@ import { useBlockProps, MediaPlaceholder, BlockIcon, BlockControls, MediaUpload,
  *
  * @return {WPElement} Element to render.
  */
-import { ToolbarButton, ToolbarGroup, SelectControl, ToggleControl, PanelBody  } from "@wordpress/components";
+
 
 export default function save(props) {
+
 	let blockProps = useBlockProps.save({
-		className: [
-			"scrollable-gallery",
-			props.attributes.pauseOnHover ? "pause-on-hover" : null,
-		],
+		className: "scrollable-gallery",
 		style: {
-			"--total-container-transform": ((props.attributes.images.length + 1) * 16)
+			"--total-container-transform": ((props.attributes.images.length) * 8)
 				.toString()
-				.concat("vw"),
-		},
+				.concat("vw")
+		}
 	});
+
 	return (
-		<div {...useBlockProps.save()}>
-			<figure className="scrollable-gallery-inner-container" data-direction="right">
+		<div {...blockProps}>
+			<div className="scrollable-gallery-inner-container" data-length = {((props.attributes.images.length + 1) * 8)} data-direction={props.attributes.direction}>
 				{props.attributes.images.map((image, index) => (
 					<img key={index} src={image.url} data-mediaid={image.id} />
 				))}
@@ -43,8 +42,8 @@ export default function save(props) {
 						src={image.url}
 						data-mediaid={image.id}
 					/>
-				))}
-			</figure>
+				))}				
+			</div>
 		</div>
 	);
 }

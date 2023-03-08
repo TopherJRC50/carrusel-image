@@ -32,16 +32,17 @@ export default function save(props) {
 		<div {...blockProps}>
 			<div className="scrollable-gallery-inner-container" data-length = {((props.attributes.images.length + 1) * 8)} data-direction={props.attributes.direction}>
 				{props.attributes.images.map((image, index) => (
-					<img key={index} src={image.url} data-mediaid={image.id} />
+					<a href={image.description}> <img key={index} src={image.url} data-mediaid={image.id} /> </a>
 				))}
 
 				{props.attributes.images.map((image, index) => (
-					<img
-						className="duplicate-image"
-						key={index}
-						src={image.url}
-						data-mediaid={image.id}
-					/>
+					<a href={image.description}> <img
+					className="duplicate-image"
+					key={index}
+					src={image.url}
+					data-mediaid={image.id}
+				/> </a>
+					
 				))}				
 			</div>
 		</div>

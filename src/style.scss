@@ -15,6 +15,15 @@
 		animation: marquee-right 25s linear infinite;
 	}
 
+	a {
+		object-fit: cover;
+		height: 100%;
+		min-width: 8vw;
+		max-width: 8vw;
+		&:not(:last-child) {
+			padding-right: 10vw;
+		}
+	}
 	img {
 		object-fit: cover;
 		height: 100%;
@@ -29,12 +38,12 @@
 @keyframes marquee-left {
 
 	100% {
-		transform: translateX(calc(-2.251  * var(--total-container-transform)));
+		transform: translateX(calc(-2.252  * var(--total-container-transform)));
 	}
 }
 
 @keyframes marquee-right {
 	0% {
-		transform: translateX(calc(-1 * var(--replacement)  * var(--total-container-transform)));
+		transform: translateX(calc(-2.252  * var(--total-container-transform)));
 	}
 }

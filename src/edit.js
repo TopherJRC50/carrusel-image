@@ -36,15 +36,6 @@ export default function Edit(props) {
 
 const hasImages = props.attributes.images.length > 0;
 
-
-let blockProps = useBlockProps.save({
-	className: "scrollable-gallery",
-	style: {
-		"--total-container-transform": ((props.attributes.images.length) * 8)
-			.toString()
-			.concat("vw")
-	}
-});
 	return (
 		<>
 			{<BlockControls>
@@ -95,9 +86,14 @@ let blockProps = useBlockProps.save({
 						
 					</MediaUploadCheck>
 					</BaseControl>
+					<div>
+							{props.attributes.images.map((image, index) => (
+								<p>{index}- {image.description}</p>
+							))}
+						</div>
 				</PanelBody>
 			</InspectorControls>}
-			<div {...blockProps}>
+			<div {...useBlockProps()}>
 				{hasImages && (
 					<div>
 						<div className="scrollable-gallery-inner-container">
